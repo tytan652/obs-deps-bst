@@ -3,28 +3,63 @@ inputs:
   activate-path:
     description: Path to the Python venv (with BuildStream) activate script
     required: true
+  project-options:
+    description: Multiline string with one project option with its value per line (e.g. 'arch x86_64')
+    required: false
+    default: ''
   element:
     description: BuildStream element to build
     required: true
   logs-path:
     description: Path to the log folder that BuildStream uses to store logs
     required: true
+outputs:
+  options:
+    description: |
+      Options used in the BuildStream command. (e.g. '-o arch x86_64')
+      Can be an empty string.
+    value: ${{ steps.parse-inputs.outputs.options }}
 runs:
   using: composite
   steps:
+    - name: Parse Inputs
+      id: parse-inputs
+      shell: bash
+      env:
+        OPTIONS: ${{ inputs.project-options }}
+      run: |
+        : Parse Inputs
+
+        echo ::group::Sanitize Element Name
+        element="${{ inputs.element }}"
+        echo "sanitized-element=${element//\//-}" >> $GITHUB_OUTPUT
+        echo ::endgroup::
+
+        if [[ -z $OPTIONS ]]; then
+          exit 0
+        fi
+
+        echo ::group::Parse Project Options
+
+        if [[ $OPTIONS == *$'\n'-* ]] || [[ $OPTIONS == *' '-* ]]; then
+          echo "::error::project-options only supports arguments to be used with -o/--option"
+          exit 2
+        fi
+
+        echo "options=-o ${OPTIONS//$'\n'/ -o }" >> $GITHUB_OUTPUT
+        echo ::endgroup::
+
     - name: Build ${{ inputs.element }}
       id: build
       shell: bash
       run: |
         : Build ${{ inputs.element }}
-        element="${{ inputs.element }}"
-        echo "sanitized-element=${element//\//-}" >> $GITHUB_OUTPUT
         source ${{ inputs.activate-path }}
-        bst --no-interactive build ${{ inputs.element }}
+        bst --no-interactive ${{ steps.parse-inputs.outputs.options }} build ${{ inputs.element }}
 
     - name: Upload Logs On Failure
-      if: ${{ failure() }}
+      if: ${{ failure() && (steps.build.conclusion == 'failure') }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.build.outputs.sanitized-element }}.logs
+        name: ${{ steps.parse-inputs.outputs.sanitized-element }}.logs
         path: ${{ inputs.logs-path }}
