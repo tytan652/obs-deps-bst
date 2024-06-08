@@ -110,7 +110,7 @@ runs:
         : Install buildbox-integration
 
         echo ::group::Install dependencies
-        sudo apt-get install bubblewrap fuse3
+        sudo apt-get install bubblewrap fuse3 arch-test
         echo ::endgroup
 
         echo ::group::Create download directory
@@ -165,6 +165,9 @@ runs:
         echo ::group::Install plugins dependencies
         pip install -U dulwich>=0.21.7 requests packaging tomli
         echo ::endgroup::
+
+    - name: Set Up QEMU
+      uses: docker/setup-qemu-action@v3
 
     - name: Setup BuildStream config file
       shell: bash
