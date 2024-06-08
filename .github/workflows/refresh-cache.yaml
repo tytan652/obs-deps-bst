@@ -11,6 +11,11 @@ concurrency:
 jobs:
   refresh-cache:
     name: Refresh Cache
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
     uses: ./.github/workflows/build-project.yaml
     with:
+      arch: ${{ matrix.arch }}
       reupload-cache: true

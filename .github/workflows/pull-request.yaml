@@ -36,8 +36,13 @@ jobs:
   build-project:
     name: Build Project
     needs: pre-checks
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
     uses: ./.github/workflows/build-project.yaml
     with:
+      arch: ${{ matrix.arch }}
       upload-artifacts: ${{ needs.pre-checks.outputs.seeking_testers == 'true' }}
 
   check-code:

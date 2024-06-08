@@ -14,8 +14,13 @@ concurrency:
 jobs:
   build-project:
     name: Build Project
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
     uses: ./.github/workflows/build-project.yaml
     with:
+      arch: ${{ matrix.arch }}
       upload-artifacts: ${{ github.ref == 'refs/heads/master' }}
 
   check-code:
