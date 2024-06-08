@@ -2,6 +2,10 @@ name: Build Project
 on:
   workflow_call:
     inputs:
+      arch:
+        description: Architecture of the build
+        default: x86_64
+        type: string
       upload-artifacts:
         description: Upload generated artifacts
         default: false
@@ -11,7 +15,8 @@ on:
         default: false
         type: boolean
 env:
-  CACHE_KEY_PREFIX: obs-deps-bst-x86_64-
+  CACHE_KEY_PREFIX: obs-deps-bst-${{ inputs.arch }}-
+  PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
   obs-deps-bst:
     name: Pre-build obs-deps.bst
@@ -49,6 +54,7 @@ jobs:
         uses: ./.github/actions/build-bst-element
         with:
           activate-path: ${{ steps.setup-buildstream.outputs.activate-path }}
+          project-options: ${{ env.PROJECT_OPTIONS }}
           element: obs-deps.bst
           logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
 
@@ -95,7 +101,7 @@ jobs:
     name: Generate ${{ matrix.modules }} Flatpak Module
     env:
       ELEMENT: flatpak-modules/${{ matrix.modules }}-tarball.bst
-      FILENAME: flatpak-${{ matrix.modules }}-x86_64
+      FILENAME: flatpak-${{ matrix.modules }}-${{ inputs.arch }}
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
@@ -121,9 +127,11 @@ jobs:
             ${{ env.CACHE_KEY_PREFIX }}
 
       - name: Build ${{ env.ELEMENT }}
+        id: build
         uses: ./.github/actions/build-bst-element
         with:
           activate-path: ${{ steps.setup-buildstream.outputs.activate-path }}
+          project-options: ${{ env.PROJECT_OPTIONS }}
           element: ${{ env.ELEMENT }}
           logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
 
@@ -133,7 +141,7 @@ jobs:
         run: |
           : Prepare ${{ matrix.modules }} Tarball
           source ${{ steps.setup-buildstream.outputs.activate-path }}
-          bst --no-interactive artifact checkout ${{ env.ELEMENT }} --tar - | xz -T0 > ${{ env.FILENAME }}.tar.xz
+          bst --no-interactive ${{ steps.build.outputs.options }} artifact checkout ${{ env.ELEMENT }} --tar - | xz -T0 > ${{ env.FILENAME }}.tar.xz
 
       - name: Upload ${{ matrix.modules }} Tarball
         if: ${{ inputs.upload-artifacts }}
