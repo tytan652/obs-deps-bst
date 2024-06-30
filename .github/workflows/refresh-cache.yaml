@@ -1,0 +1,16 @@
+name: Refresh Cache
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: 12 0 * * *
+
+concurrency:
+  # Purposefully put in the same group as push workflows to avoid race condition
+  group: 'Push @ ${{ github.ref }}'
+
+jobs:
+  refresh-cache:
+    name: Refresh Cache
+    uses: ./.github/workflows/build-project.yaml
+    with:
+      reupload-cache: true

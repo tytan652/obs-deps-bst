@@ -6,6 +6,10 @@ on:
         description: Upload generated artifacts
         default: false
         type: boolean
+      reupload-cache:
+        description: Re-upload the cache to avoid automatic eviction
+        default: false
+        type: boolean
 env:
   CACHE_KEY_PREFIX: obs-deps-bst-x86_64-
 jobs:
@@ -48,8 +52,25 @@ jobs:
           element: obs-deps.bst
           logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
 
+      - name: Remove uploaded buildbox-casd cache
+        id: cache-remove
+        if: ${{ (github.ref == 'refs/heads/master') && inputs.reupload-cache && (steps.cache-restore.outputs.cache-hit == 'true') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          : Remove existing buildbox-casd cache
+
+          echo ::group::Install GitHub CLI
+          gh extension install actions/gh-actions-cache
+          echo ::endgroup::
+
+          echo ::group::Remove cache
+          gh actions-cache delete ${{ steps.cache-restore.outputs.cache-primary-key }} -R ${{ github.repository }} -B refs/heads/master --confirm
+          echo ::endgroup::
+
       - name: Save buildbox-casd Cache
-        if: ${{ steps.build.conclusion == 'success' }}
+        if: ${{ steps.build.conclusion == 'success' || steps.cache-remove.conclusion == 'success' }}
         uses: ./.github/actions/cache-save
         with:
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
