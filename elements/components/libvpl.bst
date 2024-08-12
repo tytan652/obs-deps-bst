@@ -19,10 +19,10 @@ public:
     split-rules:
       # Put the vars.sh script in etc and examples as extra
       extra:
-        - "%{sysconfdir}"
-        - "%{sysconfdir}/**"
-        - "%{datadir}/vpl/examples"
-        - "%{datadir}/vpl/examples/**"
+      - "%{sysconfdir}"
+      - "%{sysconfdir}/**"
+      - "%{datadir}/vpl/examples"
+      - "%{datadir}/vpl/examples/**"
       runtime:
         (>):
         - "%{datadir}"
@@ -31,5 +31,5 @@ public:
 sources:
 - kind: git_repo
   url: github:intel/libvpl.git
-  track: v2.11.0
-  ref: 11a9bbda5b22ac1c544da59b4007bb57f737b487
+  track: v2.12.0
+  ref: 0c13c410095764799afea0cf645bd896378579b8
