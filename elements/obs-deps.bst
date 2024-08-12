@@ -14,6 +14,7 @@ depends:
 - components/nlohmann-json.bst
 - components/nv-codec.bst
 - components/rnnoise.bst
+- components/simde.bst
 - components/srt.bst
 - components/svt-av1.bst
 - components/swig.bst
