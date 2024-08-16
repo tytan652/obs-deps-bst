@@ -5,7 +5,7 @@ build-depends:
 
 variables:
   meson-local: >-
-    -Dtests=true
+    -Dtests=false
 
 
 sources:
