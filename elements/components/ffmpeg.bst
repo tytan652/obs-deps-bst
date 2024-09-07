@@ -50,21 +50,22 @@ variables:
 
 config:
   configure-commands:
-  - ./configure --prefix="%{prefix}" --libdir="%{libdir}" --arch="%{arch}" %{conf-local} %{conf-extra}
+  - ./configure --prefix="%{prefix}" --libdir="%{libdir}" --arch="%{arch}" %{conf-local}
+    %{conf-extra}
 
 public:
   bst:
     split-rules:
       # Put FFmpeg examples as extra
       extra:
-        - "%{datadir}"
-        - "%{datadir}/**"
+      - "%{datadir}"
+      - "%{datadir}/**"
 
 sources:
 - kind: git_repo
   url: github:FFmpeg/FFmpeg.git
-  track: n7.0
-  ref: 083443d67cb159ce469e5d902346b8d0c2cd1c93
+  track: n7.0.2
+  ref: e3a61e91030696348b56361bdf80ea358aef4a19
 - kind: patch
   path: patches/ffmpeg/0001-flvdec-handle-unknown.patch
 - kind: patch
