@@ -3,9 +3,9 @@ kind: junction
 sources:
 - kind: git_tag
   url: gitlab:freedesktop-sdk/freedesktop-sdk.git
-  track: release/23.08
+  track: release/24.08
   track-tags: True
-  ref: freedesktop-sdk-23.08.27-0-g1f8958b9d76635b3e5e60157d9f557dee1b7516e
+  ref: freedesktop-sdk-24.08.10-0-ga0402e153abcd22949934e9dfe39ab69c5784536
 - kind: create_custom_fdo_sdk_include_ffmpeg
 
 config:

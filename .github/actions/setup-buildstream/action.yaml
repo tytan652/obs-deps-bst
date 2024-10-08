@@ -127,7 +127,7 @@ runs:
         : Install BuildStream plugins dependencies
 
         echo ::group::Install BuildStream plugins dependencies
-        sudo dnf -y install python3-dulwich python3-requests python3-packaging python3-tomli
+        sudo dnf -y install python3-dulwich python3-requests python3-packaging python3-tomli python3-tomlkit
         echo ::endgroup
 
     - name: Setup BuildStream config file
