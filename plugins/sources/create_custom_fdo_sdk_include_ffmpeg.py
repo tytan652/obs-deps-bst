@@ -31,6 +31,7 @@ by adding dependencies and flags to it.
   - '%{fdo-conf-extra}'
   - '--enable-encoder=%{fdo-encoders}'
   - '--enable-decoder=%{fdo-decoders}'
+  - '--disable-decoder=h264,hevc' (optional, also disables hwaccels)
 """
 
 import os
@@ -183,11 +184,15 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
                         if name.startswith("extra-") and name.endswith("coders"):
                             continue
 
-                        # Remove variables usage from extra option flags
+                        # Remove variables usage from extra option flags and remove H264 and HEVC from the disable argument
                         if name == "conf-extra":
-                            value = value.replace(
-                                " --enable-encoder=%{" + "encoders}", ""
-                            ).replace(" --enable-decoder=%{" + "decoders}", "")
+                            value = (
+                                value.replace(" --enable-encoder=%{" + "encoders}", "")
+                                .replace(" --enable-decoder=%{" + "decoders}", "")
+                                .replace(
+                                    'disable-decoder="h264,hevc,', 'disable-decoder="'
+                                )
+                            )
 
                         data["variables"][f"fdo-{name}"] = value
 
