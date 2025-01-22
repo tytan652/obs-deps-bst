@@ -24,13 +24,11 @@ jobs:
     outputs:
       cache-key: ${{ steps.cache-restore.outputs.cache-primary-key }}
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@v10
-        with:
-          root-reserve-mb: 10240
-
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Prepare build space
+        uses: ./.github/actions/prepare-build-space
 
       - name: Setup BuildStream
         id: setup-buildstream
@@ -103,13 +101,11 @@ jobs:
       ELEMENT: flatpak-modules/${{ matrix.modules }}-tarball.bst
       FILENAME: flatpak-${{ matrix.modules }}-${{ inputs.arch }}
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@v10
-        with:
-          root-reserve-mb: 10240
-
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Prepare build space
+        uses: ./.github/actions/prepare-build-space
 
       - name: Setup BuildStream
         id: setup-buildstream
