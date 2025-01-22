@@ -59,9 +59,7 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
     def get_unique_key(self):
         # Unavoidable use of private API to get Freedesktop SDK digest
         with self._cache_directory() as directory:
-            self.include_digest = (
-                directory._get_digest()  # pylint: disable=protected-access
-            )
+            self.include_digest = directory._get_digest()
 
         return [
             utils.sha256sum(self.path),
@@ -143,7 +141,7 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
                 if len(data["public"].items()) == 1:
                     data.pop("public")
                 else:
-                    data["public"].pop["bst"]  # pylint: disable=pointless-statement
+                    data["public"].pop["bst"]
 
             # Remove config since it relies on variable
             data.pop("config")
@@ -158,11 +156,13 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
 
                     # Add base FFmpeg dependencies
                     for depends in ["build-depends", "depends"]:
-                        if not depends in base:
+                        if depends not in base:
                             continue
 
                         # Adapt dependencies by adding the junction name
-                        for depend in base[depends][
+                        for depend in base[
+                            depends
+                        ][
                             "(>)"
                         ]:  # '(>)' is always present to avoid overriding include dependencies
                             data[depends].append(f"freedesktop-sdk.bst:{depend}")
