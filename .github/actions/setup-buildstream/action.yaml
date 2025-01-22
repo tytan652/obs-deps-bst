@@ -1,9 +1,5 @@
 name: Setup BuildStream
 inputs:
-  venv-path:
-    description: Path to the Python venv folder created for BuildStream
-    required: false
-    default: ${{ github.workspace }}/.venv
   caches-path:
     description: Path to the cache folder that BuildStream will use to cache artifacts
     required: false
@@ -33,9 +29,9 @@ inputs:
     required: false
     default: '${GITHUB_REPOSITORY#*/}'
 outputs:
-  activate-path:
-    description: Path to the Python venv activate script
-    value: ${{ steps.install-buildstream.outputs.activate-path }}
+  shell:
+    description: Shell with BuildStream env
+    value: ${{ steps.install-buildstream.outputs.shell }}
   caches-path:
     description: Path to the cache folder that BuildStream uses to cache artifacts
     value: ${{ inputs.caches-path }}
@@ -63,11 +59,11 @@ runs:
         exit 2
 
     - name: Check Runner Architecture
-      if: runner.arch != 'x64'
+      if: runner.arch != 'x64' && runner.arch != 'ARM64'
       shell: bash
       run: |
         : Check Runner Architecture
-        echo "::notice::setup-buildstream action requires a x86_64 runner."
+        echo "::notice::setup-buildstream action requires a x86_64 or a ARM64 runner."
         exit 2
 
     - name: Check Action Inputs
@@ -101,73 +97,38 @@ runs:
         esac
         echo ::endgroup::
 
-    - name: Install buildbox-integration
-      env:
-          DOWNLOAD_URL: https://gitlab.com/api/v4/projects/8347934/packages/generic/releases/1.1.0/buildbox-1.1.0-x86_64-linux-gnu.tgz
-          DOWNLOAD_SHA256: e2e63112290b5bd6a64ccf26e40a53b73badb7b88dd98b20fca48a8050f93361
+    - name: Install Toolbx container
       shell: bash
       run: |
-        : Install buildbox-integration
+        : Install Toolbx container
 
-        echo ::group::Install dependencies
-        sudo apt-get install bubblewrap fuse3 arch-test
+        echo ::group::Install Toolbx
+        sudo apt-get install podman-toolbox
         echo ::endgroup
 
-        echo ::group::Create download directory
-        DOWNLOAD_DIR=$(mktemp -d)
-        echo ::endgroup::
-
-        echo ::group::Download tarball
-        DOWNLOAD_FILE="${DOWNLOAD_DIR}/$(basename ${DOWNLOAD_URL})"
-
-        curl ${DOWNLOAD_URL} --location --output ${DOWNLOAD_FILE}
-        echo ::endgroup::
-
-        echo ::group::Check sha256sum
-        echo "${DOWNLOAD_SHA256} ${DOWNLOAD_FILE}" | sha256sum --check --status
-        echo ::endgroup::
-
-        echo ::group::Extract to ~/.local/bin
-        mkdir ~/.local/bin
-        tar -zxvf ${DOWNLOAD_FILE} -C ~/.local/bin
-        echo ::endgroup::
-
-        echo ::group::Cleanup download directory
-        rm -rf DOWNLOAD_DIR
-        echo ::endgroup::
+        echo ::group::Create container
+        SHELL=$(which bash) toolbox -y --log-level=info --log-podman create buildstream --distro fedora --release 41
+        echo ::endgroup
 
     - name: Install BuildStream
       id: install-buildstream
-      env:
-        ACTIVATE_PATH: ${{ inputs.venv-path }}/bin/activate
       shell: bash
       run: |
         : Install BuildStream
-        echo ::group::Create and activate Python venv
-        python -m venv ${{ inputs.venv-path }}
-        echo "activate-path=${ACTIVATE_PATH}" >> $GITHUB_OUTPUT
-        source ${ACTIVATE_PATH}
-        echo ::endgroup::
 
         echo ::group::Install BuildStream
-        sudo apt-get install lzip
-        pip install -U BuildStream
-        echo ::endgroup::
+        toolbox run -c buildstream sudo dnf -y install buildstream arch-test
+        echo 'shell=toolbox run -c buildstream bash --noprofile --norc -eo pipefail {0}' >> $GITHUB_OUTPUT
+        echo ::endgroup
 
     - name: Install BuildStream plugins dependencies
-      shell: bash
+      shell: ${{ steps.install-buildstream.outputs.shell }}
       run: |
         : Install BuildStream plugins dependencies
-        echo ::group::Activate Python venv
-        source ${{ steps.install-buildstream.outputs.activate-path }}
-        echo ::endgroup::
 
-        echo ::group::Install plugins dependencies
-        pip install -U dulwich>=0.21.7 requests packaging tomli
-        echo ::endgroup::
-
-    - name: Set Up QEMU
-      uses: docker/setup-qemu-action@v3
+        echo ::group::Install BuildStream plugins dependencies
+        sudo dnf -y install python3-dulwich python3-requests python3-packaging python3-tomli
+        echo ::endgroup
 
     - name: Setup BuildStream config file
       shell: bash

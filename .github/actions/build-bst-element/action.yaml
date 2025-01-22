@@ -1,7 +1,7 @@
 name: Build BuildStream Element
 inputs:
-  activate-path:
-    description: Path to the Python venv (with BuildStream) activate script
+  shell:
+    description: Shell with BuildStream env
     required: true
   project-options:
     description: Multiline string with one project option with its value per line (e.g. 'arch x86_64')
@@ -51,10 +51,9 @@ runs:
 
     - name: Build ${{ inputs.element }}
       id: build
-      shell: bash
+      shell: ${{ inputs.shell }}
       run: |
         : Build ${{ inputs.element }}
-        source ${{ inputs.activate-path }}
         bst --no-interactive ${{ steps.parse-inputs.outputs.options }} build ${{ inputs.element }}
 
     - name: Upload Logs On Failure

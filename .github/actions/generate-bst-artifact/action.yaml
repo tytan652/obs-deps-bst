@@ -1,0 +1,22 @@
+name: Generate BuildStream Artifact
+inputs:
+  shell:
+    description: Shell with Buildstream env
+    required: true
+  element:
+    description: BuildStream element to generate artifact from
+    required: true
+  filename:
+    description: Artifact filename
+    required: true
+  options:
+    description: Options used in to build the element
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Generate BuildStream Artifact
+      shell: ${{ inputs.shell }}
+      run: |
+        : Generate BuildStream Artifact
+        bst --no-interactive ${{ inputs.options }} artifact checkout ${{ inputs.element }} --tar - | xz -T0 > ${{ inputs.filename }}.tar.xz
