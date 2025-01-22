@@ -20,7 +20,7 @@ env:
 jobs:
   obs-deps-bst:
     name: Pre-build obs-deps.bst
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       cache-key: ${{ steps.cache-restore.outputs.cache-primary-key }}
     steps:
@@ -91,7 +91,7 @@ jobs:
           fi
 
   flatpak-modules:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: obs-deps-bst
     strategy:
       matrix:

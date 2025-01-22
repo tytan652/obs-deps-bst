@@ -12,7 +12,7 @@ concurrency:
 jobs:
   pre-checks:
     name: Pre-Checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       seeking_testers: ${{ steps.labels.outputs.seeking_testers }}
     steps:
