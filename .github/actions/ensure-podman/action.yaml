@@ -1,0 +1,20 @@
+name: Ensure Podman
+runs:
+  using: composite
+  steps:
+    - name: Check Runner Operating System
+      if: runner.os != 'Linux'
+      shell: bash
+      run: |
+        : Check Runner Operating System
+        echo "::notice::setup-buildstream action requires a Ubuntu runner."
+        exit 2
+
+    - name: Ensure Podman
+      shell: bash
+      run: |
+        : Ensure Podman
+
+        echo ::group::Install Podman
+        sudo apt-get install podman
+        echo ::endgroup::
