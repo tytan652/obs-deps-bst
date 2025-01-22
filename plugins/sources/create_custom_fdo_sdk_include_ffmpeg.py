@@ -111,7 +111,7 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
                 data[depends] = add_junction(data[depends])
 
             # Remove variables relying only on another variable
-            for variable in ["ffmpeg-prefix", "ffmpeg-libdir", "ffmpeg-arch", "(?)"]:
+            for variable in ["ffmpeg-arch", "(?)"]:
                 data["variables"].pop(variable)
 
             # Remove variable usage in conf-local
@@ -119,8 +119,8 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
             conf_local = []
             for s in old_conf_local:
                 if not (
-                    s.startswith("--prefix")  # Relies on a removed variable
-                    or s.startswith("--libdir")  # Relies on a removed variable
+                    s.startswith("--prefix")  # Removed to be modifiable
+                    or s.startswith("--libdir")  # Removed to be modifiable
                     or s.startswith("--arch")
                 ):  # Relies on a removed variable
                     conf_local.append(s)
@@ -130,9 +130,10 @@ class CreateCustomFdoSdkIncludeFFmpeg(Source):
             # Remove conf-extra which is just a placeholder for the config item
             data["variables"].pop("conf-extra")
 
-            # Remove sources (we use our own) and cpe since it is bound to removed sources
+            # Remove sources (we use our own) and cpe if present since it is bound to removed sources
             data.pop("sources")
-            data["public"].pop("cpe")
+            if "cpe" in data["public"]:
+                data["public"].pop("cpe")
 
             # Remove split-rules since they rely on variable and also we will apply our own
             data["public"]["bst"].pop("split-rules")
