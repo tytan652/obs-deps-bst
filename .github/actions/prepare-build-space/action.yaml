@@ -1,0 +1,109 @@
+name: Prepare Build Space
+runs:
+  using: composite
+  steps:
+    - name: Check Runner Operating System
+      if: runner.os != 'Linux'
+      shell: bash
+      run: |
+        : Check Runner Operating System
+        echo "::notice::setup-buildstream action requires a Ubuntu runner."
+        exit 2
+
+    - name: Check Runner Architecture
+      if: runner.arch != 'x64' && runner.arch != 'ARM64'
+      shell: bash
+      run: |
+        : Check Runner Architecture
+        echo "::notice::setup-buildstream action requires a x86_64 or a ARM64 runner."
+        exit 2
+
+    - name: Install Dust
+      env:
+          DOWNLOAD_URL: ${{ runner.arch == 'ARM64' && 'https://github.com/bootandy/dust/releases/download/v1.1.1/dust-v1.1.1-aarch64-unknown-linux-musl.tar.gz' || 'https://github.com/bootandy/dust/releases/download/v1.1.1/dust-v1.1.1-x86_64-unknown-linux-musl.tar.gz' }}
+          DOWNLOAD_SHA256: ${{ runner.arch == 'ARM64' && 'a100dd63fd992a830cb9b5c3f42b1d4053a8717726cacf50db3bf29def0c34ff' || '4d0e7f3e39ce85e98cc69260ab6f40e460a455cd8575af1ba70d14a2940ae553' }}
+      shell: bash
+      run: |
+        : Install Dust
+
+        echo ::group::Create download directory
+        DOWNLOAD_DIR=$(mktemp -d)
+        echo ::endgroup::
+
+        echo ::group::Download tarball
+        DOWNLOAD_FILE="${DOWNLOAD_DIR}/$(basename ${DOWNLOAD_URL})"
+
+        curl ${DOWNLOAD_URL} --location --output ${DOWNLOAD_FILE}
+        echo ::endgroup::
+
+        echo ::group::Check sha256sum
+        echo "${DOWNLOAD_SHA256} ${DOWNLOAD_FILE}" | sha256sum --check --status
+        echo ::endgroup::
+
+        echo ::group::Extract archive
+        tar -zxvf ${DOWNLOAD_FILE} --strip-components=1 -C ${DOWNLOAD_DIR}
+        echo ::endgroup::
+
+        echo ::group::Copy executable to /usr/local/bin
+        sudo mkdir -p /usr/local/bin
+        sudo cp ${DOWNLOAD_DIR}/dust /usr/local/bin/.
+        echo ::endgroup::
+
+        echo ::group::Cleanup download directory
+        rm -rf DOWNLOAD_DIR
+        echo ::endgroup::
+
+    - name: Prepare build space
+      shell: bash
+      env:
+        DUST_ARGS: --no-progress --no-colors --only-dir --limit-filesystem /
+      run: |
+        : Prepare build space
+
+        echo ::group::Available storage
+        sudo df -h
+        echo ::endgroup::
+
+        echo ::group::Disk usage
+        sudo dust ${{ env.DUST_ARGS }}
+        echo ::endgroup::
+
+        echo ::group::Remove Android stuff
+        sudo rm -rf /usr/local/lib/android
+        echo ::endgroup::
+
+        echo ::group::Remove CodeQL stuff
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        echo ::endgroup::
+
+        echo ::group::Remove GHCup stuff
+        sudo rm -rf /usr/local/.ghcup
+        echo ::endgroup::
+
+        echo ::group::Disk usage
+        sudo dust ${{ env.DUST_ARGS }}
+        echo ::endgroup::
+
+        echo ::group::Remove Docker images
+        sudo docker image prune --all --force || true
+        echo ::endgroup::
+
+        echo ::group::Remove Python stuff
+        sudo rm -rf /opt/hostedtoolcache/Python
+        echo ::endgroup::
+
+        echo ::group::Remove Swift stuff
+        sudo rm -rf /usr/share/swift
+        echo ::endgroup::
+
+        echo ::group::Remove .NET stuff
+        sudo rm -rf /usr/share/dotnet
+        echo ::endgroup::
+
+        echo ::group::Disk usage
+        sudo dust ${{ env.DUST_ARGS }}
+        echo ::endgroup::
+
+        echo ::group::Available storage
+        sudo df -h
+        echo ::endgroup::
