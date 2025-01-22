@@ -3,72 +3,15 @@ on:
   workflow_call:
 env:
   WORKFLOW_FILEPATH: .github/workflows/check-code.yaml
-  PYLINT_VERSION_SPECIFIER: ==3.2.*
-  PYLINT_ACTIONS_VER_SPECIFIER: ==0.*
-  BLACK_REQUIRED_VERSION: 24
 jobs:
-  pylint:
-    name: Run Pylint
-    runs-on: ubuntu-22.04
+  ruff:
+    name: Run Ruff
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check for Changed Files
-        id: check
-        uses: obsproject/obs-studio/.github/actions/check-changes@19646f9434857120625524fbf15f254efa1afecc
-        with:
-          checkGlob: "'${{ env.WORKFLOW_FILEPATH }}' '.pylintrc' '*.py'"
-          diffFilter: 'ACM'
-
-      - name: Setup BuildStream
-        id: setup-buildstream
-        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
-        uses: ./.github/actions/setup-buildstream
-        with:
-          venv-path: ${{ github.workspace }}/.venv
-
-      - name: Install Pylint
-        id: install
-        if: ${{ steps.setup-buildstream.conclusion == 'success' }}
-        shell: bash
-        run: |
-          : Install Pylint
-          source ${{ steps.setup-buildstream.outputs.activate-path }}
-          pip install pylint${{ env.PYLINT_VERSION_SPECIFIER }} pylint-actions${{ env.PYLINT_ACTIONS_VER_SPECIFIER }}
-
-      - name: Run Pylint
-        if: ${{ steps.install.conclusion == 'success' }}
-        shell: bash
-        run: |
-          : Run Pylint
-          source ${{ steps.setup-buildstream.outputs.activate-path }}
-          find ${{ github.workspace }} -path '${{ github.workspace }}/.venv' -prune -o -iname "*.py" -exec pylint --load-plugins=pylint_actions --output-format=actions {} +
-
-  black:
-    name: Run Black
-    runs-on: ubuntu-22.04
-    container:
-      image: pyfound/black:latest_release
-    steps:
-      - name: Install Git
-        shell: bash
-        run: |
-          : Install Git
-          apt-get update
-          apt-get install -y git
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set Up Environment
-        run: |
-          : Set Up Environment
-          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
       - name: Check for Changed Files
         id: check
@@ -77,11 +20,12 @@ jobs:
           checkGlob: "'${{ env.WORKFLOW_FILEPATH }}' '*.py'"
           diffFilter: 'ACM'
 
-      - name: Run Black
+      - name: Lint with Ruff
         if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
-        shell: bash
-        run: |
-          : Run Black
-          exit_code=0
-          find . -iname "*.py" -exec black --required-version ${{ env.BLACK_REQUIRED_VERSION }} --check {} + 2>> $GITHUB_STEP_SUMMARY || exit_code=$?
-          exit ${exit_code}
+        uses: astral-sh/ruff-action@v3
+
+      - name: Format with Ruff
+        if: ${{ !cancelled() && fromJSON(steps.check.outputs.hasChangedFiles) }}
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check"
