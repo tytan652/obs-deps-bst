@@ -23,9 +23,7 @@ public:
 sources:
 - kind: git_repo
   url: github:intel/vpl-gpu-rt.git
-  # VVC support in libva is required since 24.3 and is not available in the version of libva provided by Freedesktop 23.08
-  # TODO: Update to 24.3 or later once libva is updated (e.g. Freedesktop SDK 24.08)
-  track: intel-onevpl-24.2.5
-  ref: e0b981d1bf8ca4f9d346089d530cc149c09e10df
+  track: intel-onevpl-24.3.4
+  ref: fcad0a923c5d7d7483eb993378f7055a1b348241
 - kind: patch
   path: patches/vpl-gpu-rt/010-vpl-gpu-rt-disable-verbose-makefile.patch
