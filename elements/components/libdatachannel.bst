@@ -21,5 +21,5 @@ variables:
 sources:
 - kind: git_repo
   url: github:paullouisageneau/libdatachannel.git
-  track: v0.21.0
-  ref: 9d5c46b8f506943727104d766e5dad0693c5a223
+  track: v0.21.1
+  ref: 898bdffe7340134f0891633cc7a6f6d2132c31c3
