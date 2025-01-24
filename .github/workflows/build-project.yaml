@@ -49,6 +49,13 @@ jobs:
           restore-keys: |
             ${{ env.CACHE_KEY_PREFIX }}
 
+      - name: Show disk usage
+        shell: bash
+        run: |
+          : Show disk usage
+
+          dust --no-progress --no-colors --only-dir .bst
+
       - name: Build obs-deps.bst
         id: build
         if: ${{ (github.ref == 'refs/heads/master') && (steps.cache-restore.outputs.cache-hit != 'true') }}
@@ -58,6 +65,13 @@ jobs:
           project-options: ${{ env.PROJECT_OPTIONS }}
           element: obs-deps.bst
           logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
+
+      - name: Show disk usage
+        shell: bash
+        run: |
+          : Show disk usage
+
+          dust --no-progress --no-colors --only-dir .bst
 
       - name: Remove uploaded buildbox-casd cache
         id: cache-remove
@@ -128,6 +142,13 @@ jobs:
           restore-keys: |
             ${{ env.CACHE_KEY_PREFIX }}
 
+      - name: Show disk usage
+        shell: bash
+        run: |
+          : Show disk usage
+
+          dust --no-progress --no-colors --only-dir .bst
+
       - name: Build ${{ env.ELEMENT }}
         id: build
         uses: ./.github/actions/build-bst-element
@@ -136,6 +157,13 @@ jobs:
           project-options: ${{ env.PROJECT_OPTIONS }}
           element: ${{ env.ELEMENT }}
           logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
+
+      - name: Show disk usage
+        shell: bash
+        run: |
+          : Show disk usage
+
+          dust --no-progress --no-colors --only-dir .bst
 
       - name: Prepare ${{ matrix.modules }} Tarball
         if: ${{ inputs.upload-artifacts }}
