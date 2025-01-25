@@ -36,17 +36,11 @@ variables:
   # Only x264 is disabled in Freedesktop SDK
   obs-missing-encoders: libx264,libx264rgb
 
-  # FFmpeg 7.0 requires more recent Vulkan headers than what Freedesktop SDK 23.08 provides
-  # TODO: Remove once the header is update (e.g. Freedesktop SDK 24.08)
-  fixup-conf-extra: >-
-    --disable-vulkan
-
   conf-extra: >-
     --enable-encoder=%{fdo-encoders},%{obs-missing-encoders}
     --enable-decoder=%{fdo-decoders}
     %{obs-conf-extra}
     %{fdo-conf-extra}
-    %{fixup-conf-extra}
 
 config:
   configure-commands:
