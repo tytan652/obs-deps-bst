@@ -31,7 +31,7 @@ inputs:
 outputs:
   shell:
     description: Shell with BuildStream env
-    value: ${{ steps.install-buildstream.outputs.shell }}
+    value: ${{ steps.install-toolbx.outputs.shell }}
   caches-path:
     description: Path to the cache folder that BuildStream uses to cache artifacts
     value: ${{ inputs.caches-path }}
@@ -98,6 +98,7 @@ runs:
         echo ::endgroup::
 
     - name: Install Toolbx container
+      id: install-toolbx
       shell: bash
       run: |
         : Install Toolbx container
@@ -107,27 +108,8 @@ runs:
         echo ::endgroup
 
         echo ::group::Create container
-        SHELL=$(which bash) toolbox -y --log-level=info --log-podman create buildstream --distro fedora --release 41
-        echo ::endgroup
-
-    - name: Install BuildStream
-      id: install-buildstream
-      shell: bash
-      run: |
-        : Install BuildStream
-
-        echo ::group::Install BuildStream
-        toolbox run -c buildstream sudo dnf -y install buildstream arch-test
+        SHELL=$(which bash) toolbox -y --log-level=info --log-podman create buildstream --image registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:latest
         echo 'shell=toolbox run -c buildstream bash --noprofile --norc -eo pipefail {0}' >> $GITHUB_OUTPUT
-        echo ::endgroup
-
-    - name: Install BuildStream plugins dependencies
-      shell: ${{ steps.install-buildstream.outputs.shell }}
-      run: |
-        : Install BuildStream plugins dependencies
-
-        echo ::group::Install BuildStream plugins dependencies
-        sudo dnf -y install python3-dulwich python3-requests python3-packaging python3-tomli
         echo ::endgroup
 
     - name: Setup BuildStream config file
