@@ -1,0 +1,16 @@
+name: Source Track BuildStream Element
+inputs:
+  shell:
+    description: Shell with BuildStream env
+    required: true
+  element:
+    description: BuildStream element to source track
+    required: True
+runs:
+  using: composite
+  steps:
+    - name: Source Track BuildStream Element
+      shell: ${{ inputs.shell }}
+      run: |
+        : Source Track BuildStream Element
+        bst --no-interactive source track ${{ inputs.element }}

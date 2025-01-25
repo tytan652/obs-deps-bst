@@ -1,0 +1,91 @@
+name: BuildStream Maintainance
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: 12 0 * * *
+
+concurrency:
+  # Purposefully put in the same group as push workflows to avoid race condition
+  group: 'Push @ ${{ github.ref }}'
+
+jobs:
+  refresh-cache:
+    name: Refresh Cache
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+    uses: ./.github/workflows/build-project.yaml
+    with:
+      arch: ${{ matrix.arch }}
+      reupload-cache: true
+
+  check-fsdk-update:
+    name: Check for Freedesktop SDK update
+    needs: refresh-cache
+    runs-on: 'ubuntu-24.04'
+    env:
+      ELEMENT: freedesktop-sdk.bst
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure Podman
+        uses: ./.github/actions/ensure-podman
+
+      - name: Setup BuildStream
+        id: setup-buildstream
+        uses: ./.github/actions/setup-buildstream
+
+      - name: Source Track Element
+        uses: ./.github/actions/source-track-bst-element
+        with:
+          shell: ${{ steps.setup-buildstream.outputs.shell }}
+          element: ${{ env.ELEMENT }}
+
+      - name: Check if the element has changed
+        id: check
+        uses: obsproject/obs-studio/.github/actions/check-changes@19646f9434857120625524fbf15f254efa1afecc
+        with:
+          checkGlob: "'elements/${{ env.ELEMENT }}'"
+          diffFilter: 'ACM'
+
+      - name: Parse the new ref
+        id: parse-ref
+        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
+        shell: bash
+        run: |
+          python .github/scripts/parse-bst-git-tag-ref.py elements/${{ env.ELEMENT }}
+
+      - name: Sync common BuildStream plugins
+        id: sync
+        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
+        shell: bash
+        run: |
+          git clone --branch=${{ steps.parse-ref.outputs.tag }} --depth=1 https://gitlab.com/freedesktop-sdk/freedesktop-sdk
+
+          for file in elements/plugin/*;
+            if [ -f "freedesktop-sdk/$files" ]; then
+              cp freedesktop-sdk/$files $files
+            else
+              rm $files
+            fi
+          done
+
+          tag="${{ steps.parse-ref.outputs.tag }}"
+          prefix="freedesktop-sdk-"
+          version="${tag#$prefix}"
+
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
+        uses: peter-evans/create-pull-request@d121e62763d8cc35b5fb1710e887d6e69a52d3a4
+        with:
+          author: 'Update Checker <commits@obsproject.com>'
+          commit-message: 'Update Freedesktop SDK to version ${{ steps.sync.outputs.version }}'
+          title: 'Update Freedesktop SDK'
+          branch: 'automated/update-fsdk'
+          delete-branch: true
+          add-paths: elements/*
+
