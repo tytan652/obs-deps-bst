@@ -18,137 +18,31 @@ env:
   FP_DEPS_KEY_PREFIX: flatpak-deps-bst-${{ inputs.arch }}-
   PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
-  fp-deps-bst:
-    name: Pre-build deps.bst
-    runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+  prepare:
+    name: Prepare
+    runs-on: 'ubuntu-24.04'
     outputs:
-      cache-key: ${{ steps.cache-restore.outputs.cache-primary-key }}
+      cache-key-hash: ${{ steps.cache-key-hash.outputs.hash }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare build space
-        uses: ./.github/actions/prepare-build-space
-
-      - name: Ensure Podman
-        uses: ./.github/actions/ensure-podman
-
-      - name: Setup BuildStream
-        id: setup-buildstream
-        uses: ./.github/actions/setup-buildstream
-        with:
-          add-local-cache-server-config: 'both'
-          local-cache-server-push: 'both'
-
-      - name: Restore buildbox-casd Cache
-        id: cache-restore
-        uses: ./.github/actions/cache-restore
-        with:
-          server-quota-high: 2G
-          key: ${{ env.FP_DEPS_KEY_PREFIX }}${{ hashFiles('project.conf', 'elements/**/*.bst', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}
-          restore-keys: |
-            ${{ env.FP_DEPS_KEY_PREFIX }}
-
-      - name: Build deps.bst
-        id: build
-        if: ${{ (github.ref == 'refs/heads/master') && (steps.cache-restore.outputs.cache-hit != 'true') }}
-        uses: ./.github/actions/build-bst-element
-        with:
-          shell: ${{ steps.setup-buildstream.outputs.shell }}
-          project-options: ${{ env.PROJECT_OPTIONS }}
-          element: deps.bst
-          logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
-
-      - name: Remove uploaded buildbox-casd cache
-        id: cache-remove
-        if: ${{ (github.ref == 'refs/heads/master') && inputs.reupload-cache && (steps.cache-restore.outputs.cache-hit == 'true') }}
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Generate cache key hash
+        id: cache-key-hash
         shell: bash
         run: |
-          : Remove existing buildbox-casd cache
+          : Generate cache key hash
 
-          echo ::group::Install GitHub CLI
-          gh extension install actions/gh-actions-cache
-          echo ::endgroup::
+          echo "hash=${{ hashFiles('project.conf', 'elements/**/*.bst', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}"  >> $GITHUB_OUTPUT
 
-          echo ::group::Remove cache
-          gh actions-cache delete ${{ steps.cache-restore.outputs.cache-primary-key }} -R ${{ github.repository }} -B refs/heads/master --confirm
-          echo ::endgroup::
-
-      - name: Save buildbox-casd Cache
-        if: ${{ steps.build.conclusion == 'success' || steps.cache-remove.conclusion == 'success' }}
-        uses: ./.github/actions/cache-save
-        with:
-          key: ${{ steps.cache-restore.outputs.cache-primary-key }}
-          path: ${{ steps.cache-restore.outputs.cache-path }}
-
-      - name: Build Skipped
-        if: ${{ steps.build.conclusion == 'skipped' }}
-        shell: bash
-        run: |
-          if [[ "${{ steps.cache-restore.outputs.cache-hit }}" != "true" ]]; then
-            echo "::notice::Building was skipped since the build cache will not be saved"
-          else
-            echo "::notice::Building was skipped since a matching build cache is already available"
-          fi
-
-  flatpak-modules:
-    runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
-    needs: fp-deps-bst
-    strategy:
-      matrix:
-        modules: [base, devel, devtools]
-    name: Generate ${{ matrix.modules }} Flatpak Module
-    env:
-      ELEMENT: flatpak-modules/${{ matrix.modules }}-tarball.bst
-      FILENAME: flatpak-${{ matrix.modules }}-${{ inputs.arch }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Prepare build space
-        uses: ./.github/actions/prepare-build-space
-
-      - name: Ensure Podman
-        uses: ./.github/actions/ensure-podman
-
-      - name: Setup BuildStream
-        id: setup-buildstream
-        uses: ./.github/actions/setup-buildstream
-        with:
-          add-local-cache-server-config: 'both'
-
-      - name: Restore buildbox-casd Cache
-        id: cache-restore
-        uses: ./.github/actions/cache-restore
-        with:
-          server-quota-high: 2G
-          key: ${{ needs.fp-deps-bst.outputs.cache-key }}
-          restore-keys: |
-            ${{ env.FP_DEPS_KEY_PREFIX }}
-
-      - name: Build ${{ env.ELEMENT }}
-        id: build
-        uses: ./.github/actions/build-bst-element
-        with:
-          shell: ${{ steps.setup-buildstream.outputs.shell }}
-          project-options: ${{ env.PROJECT_OPTIONS }}
-          element: ${{ env.ELEMENT }}
-          logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
-
-      - name: Prepare ${{ matrix.modules }} Tarball
-        if: ${{ inputs.upload-artifacts }}
-        uses: ./.github/actions/generate-bst-artifact
-        with:
-          shell: ${{ steps.setup-buildstream.outputs.shell }}
-          element: ${{ env.ELEMENT }}
-          filename: ${{ env.FILENAME }}
-          options: ${{ steps.build.outputs.options }}
-
-      - name: Upload ${{ matrix.modules }} Tarball
-        if: ${{ inputs.upload-artifacts }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.FILENAME }}
-          path: ${{ env.FILENAME }}.tar.xz
+  fp-deps:
+    needs: prepare
+    uses: ./.github/workflows/build-fp-modules.yaml
+    with:
+      cache-key-prefix: flatpak-deps-bst-${{ inputs.arch }}-
+      cache-key-hash: ${{ needs.prepare.outputs.cache-key-hash }}
+      element: deps.bst
+      modules: '["base", "devel", "devtools"]'
+      arch: ${{ inputs.arch }}
+      upload-artifacts: ${{ inputs.upload-artifacts }}
+      reupload-cache: ${{ inputs.reupload-cache }}
