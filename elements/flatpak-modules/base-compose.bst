@@ -1,5 +1,5 @@
 kind: compose
-description: Composition to allow only shared libraries and debug symbols
+description: Composition to allow only shared libraries and debug symbols from non-Qt dependencies
 
 config:
   exclude:
@@ -10,6 +10,6 @@ config:
     - extra
 
 build-depends:
-- obs-deps.bst
-- manifest.bst
+- deps.bst
+- manifests/deps.bst
 - flatpak-modules/fixup-debugdir.bst

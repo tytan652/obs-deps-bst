@@ -2,7 +2,7 @@ kind: script
 description: Fixup to debug directory with symlink to the same place as a Flatpak build
 
 build-depends:
-  - obs-deps.bst
+  - deps.bst
 
 config:
   root-read-only: true
