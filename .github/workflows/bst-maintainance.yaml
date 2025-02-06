@@ -9,20 +9,16 @@ concurrency:
   group: 'Push @ ${{ github.ref }}'
 
 jobs:
-  refresh-cache:
-    name: Refresh Cache
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x86_64, aarch64]
+  refresh-caches:
+    name: Refresh Caches
     uses: ./.github/workflows/build-project.yaml
     with:
-      arch: ${{ matrix.arch }}
+      arches: '["x86_64", "aarch64"]'
       reupload-cache: true
 
   check-fsdk-update:
     name: Check for Freedesktop SDK update
-    needs: refresh-cache
+    needs: refresh-caches
     runs-on: 'ubuntu-24.04'
     env:
       ELEMENT: freedesktop-sdk.bst
