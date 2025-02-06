@@ -8,13 +8,9 @@ on:
 jobs:
   build-project:
     name: Build Project
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x86_64, aarch64]
     uses: ./.github/workflows/build-project.yaml
     with:
-      arch: ${{ matrix.arch }}
+      arches: '["x86_64", "aarch64"]'
       upload-artifacts: true
 
   make-release:

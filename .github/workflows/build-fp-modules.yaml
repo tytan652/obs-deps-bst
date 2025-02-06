@@ -34,7 +34,7 @@ env:
   PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
   pre-build:
-    name: Pre-build ${{ inputs.element }}
+    name: Pre-build ${{ inputs.element }} (${{ inputs.arch }})
     runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     outputs:
       cache-key: ${{ steps.cache-restore.outputs.cache-primary-key }}
@@ -114,7 +114,7 @@ jobs:
     strategy:
       matrix:
         modules: ${{ fromJson(inputs.modules) }}
-    name: Generate ${{ matrix.modules }} Flatpak Module
+    name: Generate ${{ matrix.modules }} Flatpak Module (${{ inputs.arch }})
     env:
       ELEMENT: flatpak-modules/${{ matrix.modules }}-tarball.bst
       FILENAME: flatpak-${{ matrix.modules }}-${{ inputs.arch }}
