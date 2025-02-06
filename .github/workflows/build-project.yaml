@@ -48,3 +48,20 @@ jobs:
       arch: ${{ matrix.arch }}
       upload-artifacts: ${{ inputs.upload-artifacts }}
       reupload-cache: ${{ inputs.reupload-cache }}
+
+  fp-qt:
+    name: Build qt.bst
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ${{ fromJSON(inputs.arches) }}
+    uses: ./.github/workflows/build-fp-modules.yaml
+    with:
+      cache-key-prefix: flatpak-qt-bst-${{ matrix.arch }}-
+      cache-key-hash: ${{ needs.prepare.outputs.cache-key-hash }}
+      element: qt.bst
+      modules: '["qt"]'
+      arch: ${{ matrix.arch }}
+      upload-artifacts: ${{ inputs.upload-artifacts }}
+      reupload-cache: ${{ inputs.reupload-cache }}
