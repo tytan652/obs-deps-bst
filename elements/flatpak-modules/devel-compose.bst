@@ -1,5 +1,5 @@
 kind: compose
-description: Composition to allow only headers, pkg-config files and CMake packages
+description: Composition to allow only headers, pkg-config files and CMake packages from non-Qt dependencies
 
 config:
   exclude:
@@ -11,4 +11,4 @@ config:
     - runtime
 
 build-depends:
-- obs-deps.bst
+- deps.bst

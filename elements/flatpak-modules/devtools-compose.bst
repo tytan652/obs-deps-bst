@@ -1,5 +1,5 @@
 kind: compose
-description: Composition to allow only tools used to build OBS Studio
+description: Composition to allow only tools used to build OBS Studio from non-Qt dependencies
 
 config:
   include:
@@ -12,4 +12,4 @@ config:
     - extra
 
 build-depends:
-- obs-deps.bst
+- deps.bst

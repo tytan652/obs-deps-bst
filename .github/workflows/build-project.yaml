@@ -15,11 +15,11 @@ on:
         default: false
         type: boolean
 env:
-  CACHE_KEY_PREFIX: obs-deps-bst-${{ inputs.arch }}-
+  FP_DEPS_KEY_PREFIX: flatpak-deps-bst-${{ inputs.arch }}-
   PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
-  obs-deps-bst:
-    name: Pre-build obs-deps.bst
+  fp-deps-bst:
+    name: Pre-build deps.bst
     runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     outputs:
       cache-key: ${{ steps.cache-restore.outputs.cache-primary-key }}
@@ -45,18 +45,18 @@ jobs:
         uses: ./.github/actions/cache-restore
         with:
           server-quota-high: 2G
-          key: ${{ env.CACHE_KEY_PREFIX }}${{ hashFiles('project.conf', 'elements/**/*.bst', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}
+          key: ${{ env.FP_DEPS_KEY_PREFIX }}${{ hashFiles('project.conf', 'elements/**/*.bst', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}
           restore-keys: |
-            ${{ env.CACHE_KEY_PREFIX }}
+            ${{ env.FP_DEPS_KEY_PREFIX }}
 
-      - name: Build obs-deps.bst
+      - name: Build deps.bst
         id: build
         if: ${{ (github.ref == 'refs/heads/master') && (steps.cache-restore.outputs.cache-hit != 'true') }}
         uses: ./.github/actions/build-bst-element
         with:
           shell: ${{ steps.setup-buildstream.outputs.shell }}
           project-options: ${{ env.PROJECT_OPTIONS }}
-          element: obs-deps.bst
+          element: deps.bst
           logs-path: ${{ steps.setup-buildstream.outputs.logs-path }}
 
       - name: Remove uploaded buildbox-casd cache
@@ -95,7 +95,7 @@ jobs:
 
   flatpak-modules:
     runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
-    needs: obs-deps-bst
+    needs: fp-deps-bst
     strategy:
       matrix:
         modules: [base, devel, devtools]
@@ -124,9 +124,9 @@ jobs:
         uses: ./.github/actions/cache-restore
         with:
           server-quota-high: 2G
-          key: ${{ needs.obs-deps-bst.outputs.cache-key }}
+          key: ${{ needs.fp-deps-bst.outputs.cache-key }}
           restore-keys: |
-            ${{ env.CACHE_KEY_PREFIX }}
+            ${{ env.FP_DEPS_KEY_PREFIX }}
 
       - name: Build ${{ env.ELEMENT }}
         id: build
