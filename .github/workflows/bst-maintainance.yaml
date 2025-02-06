@@ -71,11 +71,11 @@ jobs:
         run: |
           git clone --branch=${{ steps.parse-ref.outputs.tag }} --depth=1 https://gitlab.com/freedesktop-sdk/freedesktop-sdk
 
-          for file in elements/plugin/*;
-            if [ -f "freedesktop-sdk/$files" ]; then
-              cp freedesktop-sdk/$files $files
+          for file in elements/plugins/*; do
+            if [ -f "freedesktop-sdk/$file" ]; then
+              cp freedesktop-sdk/$file $file
             else
-              rm $files
+              rm $file
             fi
           done
 
