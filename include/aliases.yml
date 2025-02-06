@@ -10,6 +10,7 @@ aliases:
   # file aliases (e.g. tarballs)
   sourceforge_prdl: https://prdownloads.sourceforge.net/
   pypi: https://files.pythonhosted.org/packages/
+  qt_archive: https://download.qt.io/archive/qt/
 
   # git aliases go here
   code_videolan: https://code.videolan.org/

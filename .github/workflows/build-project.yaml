@@ -30,7 +30,7 @@ jobs:
         run: |
           : Generate cache key hash
 
-          echo "hash=${{ hashFiles('project.conf', 'elements/**/*.bst', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}"  >> $GITHUB_OUTPUT
+          echo "hash=${{ hashFiles('project.conf', 'elements/**/*.bst', 'elements/**/*.yml', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}"  >> $GITHUB_OUTPUT
 
   fp-deps:
     name: Build deps.bst
