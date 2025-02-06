@@ -1,0 +1,33 @@
+build-depends:
+- freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
+
+depends:
+- freedesktop-sdk.bst:bootstrap-import.bst
+
+variables:
+  qt-api-version: "6.6"
+  qt-version: "6.6.3"
+
+  qt-bindir: "%{bindir}"
+  qt-includedir: "%{includedir}/qt"
+  qt-libdir: "%{libdir}"
+  qt-mkspecsdir: "%{libdir}/qt/mkspecs"
+  qt-archdatadir: "%{libdir}/qt"
+  qt-pluginsdir: "%{qt-archdatadir}/plugins"
+  qt-libexecdir: "%{libexecdir}/qt"
+  qt-qmldir: "%{qt-archdatadir}/qml"
+  qt-datadir: "%{datadir}/qt"
+  qt-docdir: "%{qt-datadir}/doc"
+  qt-translationsdir: "%{qt-datadir}/translations"
+  qt-sysconfdir: "%{sysconfdir}/xdg"
+  qt-examplesdir: "%{datadir}/qt/examples"
+  qt-testsdir: "%{datadir}/qt/tests"
+  qt-descriptionsdir: "%{qt-archdatadir}/modules"
+
+public:
+  bst:
+    split-rules:
+      doc:
+        (>):
+        - "%{qt-docdir}"
+        - "%{qt-docdir}/**"
