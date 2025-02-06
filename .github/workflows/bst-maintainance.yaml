@@ -47,21 +47,26 @@ jobs:
 
       - name: Check if the element has changed
         id: check
-        uses: obsproject/obs-studio/.github/actions/check-changes@19646f9434857120625524fbf15f254efa1afecc
-        with:
-          checkGlob: "'elements/${{ env.ELEMENT }}'"
-          diffFilter: 'ACM'
+        shell: bash
+        run: |
+          : Check if the element has changed
+
+          if [[  -z "$(git status --porcelain elements/${{ env.ELEMENT }})" ]]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Parse the new ref
         id: parse-ref
-        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
+        if: ${{ fromJSON(steps.check.outputs.changed) }}
         shell: bash
         run: |
           python .github/scripts/parse-bst-git-tag-ref.py elements/${{ env.ELEMENT }}
 
       - name: Sync common BuildStream plugins
         id: sync
-        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
+        if: ${{ fromJSON(steps.check.outputs.changed) }}
         shell: bash
         run: |
           git clone --branch=${{ steps.parse-ref.outputs.tag }} --depth=1 https://gitlab.com/freedesktop-sdk/freedesktop-sdk
@@ -81,7 +86,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Create pull request
-        if: ${{ fromJSON(steps.check.outputs.hasChangedFiles) }}
+        if: ${{ fromJSON(steps.check.outputs.changed) }}
         uses: peter-evans/create-pull-request@d121e62763d8cc35b5fb1710e887d6e69a52d3a4
         with:
           author: 'Update Checker <commits@obsproject.com>'
@@ -90,4 +95,3 @@ jobs:
           branch: 'automated/update-fsdk'
           delete-branch: true
           add-paths: elements/*
-
