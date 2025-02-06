@@ -2,9 +2,9 @@ name: Build Project
 on:
   workflow_call:
     inputs:
-      arch:
-        description: Architecture of the build
-        default: x86_64
+      arches:
+        description: A JSON array of architectures to build on
+        default: '["x86_64"]'
         type: string
       upload-artifacts:
         description: Upload generated artifacts
@@ -14,12 +14,9 @@ on:
         description: Re-upload the cache to avoid automatic eviction
         default: false
         type: boolean
-env:
-  FP_DEPS_KEY_PREFIX: flatpak-deps-bst-${{ inputs.arch }}-
-  PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
   prepare:
-    name: Prepare
+    name: Prepare cache key hash
     runs-on: 'ubuntu-24.04'
     outputs:
       cache-key-hash: ${{ steps.cache-key-hash.outputs.hash }}
@@ -36,13 +33,18 @@ jobs:
           echo "hash=${{ hashFiles('project.conf', 'elements/**/*.bst', 'include/*', 'patches/**/*.patch', 'plugins/**/*.py') }}"  >> $GITHUB_OUTPUT
 
   fp-deps:
+    name: Build deps.bst
     needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ${{ fromJSON(inputs.arches) }}
     uses: ./.github/workflows/build-fp-modules.yaml
     with:
-      cache-key-prefix: flatpak-deps-bst-${{ inputs.arch }}-
+      cache-key-prefix: flatpak-deps-bst-${{ matrix.arch }}-
       cache-key-hash: ${{ needs.prepare.outputs.cache-key-hash }}
       element: deps.bst
       modules: '["base", "devel", "devtools"]'
-      arch: ${{ inputs.arch }}
+      arch: ${{ matrix.arch }}
       upload-artifacts: ${{ inputs.upload-artifacts }}
       reupload-cache: ${{ inputs.reupload-cache }}
