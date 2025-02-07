@@ -64,7 +64,6 @@ jobs:
         uses: ./.github/actions/cache-restore
         with:
           server-quota-high: ${{ inputs.max-uncompressed-cache-size }}
-          server-reserved: 10G
           key: ${{ inputs.cache-key-prefix }}${{ inputs.cache-key-hash }}
           restore-keys: |
             ${{ inputs.cache-key-prefix }}
@@ -144,7 +143,6 @@ jobs:
         uses: ./.github/actions/cache-restore
         with:
           server-quota-high: ${{ inputs.max-uncompressed-cache-size }}
-          server-reserved: 10G
           key: ${{ needs.pre-build.outputs.cache-key }}
           restore-keys: |
             ${{ inputs.cache-key-prefix }}

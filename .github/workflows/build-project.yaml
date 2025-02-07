@@ -66,4 +66,4 @@ jobs:
       arch: ${{ matrix.arch }}
       upload-artifacts: ${{ inputs.upload-artifacts }}
       reupload-cache: ${{ inputs.reupload-cache }}
-      max-uncompressed-cache-size: 4G
+      max-uncompressed-cache-size: 3G
