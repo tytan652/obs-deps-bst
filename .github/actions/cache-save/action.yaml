@@ -20,7 +20,17 @@ runs:
 
     - name: Stop buildbox-casd Container
       shell: bash
-      run: podman stop buildbox-casd
+      run: |
+        : Stop buildbox-casd Container
+
+        podman stop buildbox-casd
+
+    - name: Show disk usage
+      shell: bash
+      run: |
+        : Show disk usage
+
+        du -hs ${{ inputs.path }}
 
     - name: Save Cache
       uses: actions/cache/save@v4

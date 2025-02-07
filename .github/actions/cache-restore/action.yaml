@@ -60,6 +60,13 @@ runs:
         key: ${{ inputs.key }}
         restore-keys: ${{ inputs.restore-keys }}
 
+    - name: Show disk usage
+      shell: bash
+      run: |
+        : Show disk usage
+
+        du -hs ${{ inputs.path }}
+
     - name: Setup buildbox-casd Container
       id: container
       shell: bash
