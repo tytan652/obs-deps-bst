@@ -65,6 +65,7 @@ runs:
       run: |
         : Show disk usage
 
+        mkdir -p ${{ inputs.path }}
         du -hs ${{ inputs.path }}
 
     - name: Setup buildbox-casd Container
