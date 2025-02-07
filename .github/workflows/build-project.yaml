@@ -48,6 +48,7 @@ jobs:
       arch: ${{ matrix.arch }}
       upload-artifacts: ${{ inputs.upload-artifacts }}
       reupload-cache: ${{ inputs.reupload-cache }}
+      max-uncompressed-cache-size: 2G
 
   fp-qt:
     name: Build qt.bst
@@ -65,3 +66,4 @@ jobs:
       arch: ${{ matrix.arch }}
       upload-artifacts: ${{ inputs.upload-artifacts }}
       reupload-cache: ${{ inputs.reupload-cache }}
+      max-uncompressed-cache-size: 4G
