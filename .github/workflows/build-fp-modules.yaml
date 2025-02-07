@@ -30,6 +30,10 @@ on:
         description: Re-upload the cache to avoid automatic eviction
         default: false
         type: boolean
+      max-uncompressed-cache-size:
+        description: Size of the cache uncompressed
+        type: string
+        required: true
 env:
   PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
@@ -59,7 +63,8 @@ jobs:
         id: cache-restore
         uses: ./.github/actions/cache-restore
         with:
-          server-quota-high: 2G
+          server-quota-high: ${{ inputs.max-uncompressed-cache-size }}
+          server-reserved: 10G
           key: ${{ inputs.cache-key-prefix }}${{ inputs.cache-key-hash }}
           restore-keys: |
             ${{ inputs.cache-key-prefix }}
@@ -138,7 +143,8 @@ jobs:
         id: cache-restore
         uses: ./.github/actions/cache-restore
         with:
-          server-quota-high: 2G
+          server-quota-high: ${{ inputs.max-uncompressed-cache-size }}
+          server-reserved: 10G
           key: ${{ needs.pre-build.outputs.cache-key }}
           restore-keys: |
             ${{ inputs.cache-key-prefix }}
