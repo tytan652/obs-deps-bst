@@ -104,6 +104,7 @@ runs:
         : Install Toolbx container
 
         echo ::group::Install Toolbx
+        sudo apt-get update
         sudo apt-get install podman-toolbox
         echo ::endgroup
 

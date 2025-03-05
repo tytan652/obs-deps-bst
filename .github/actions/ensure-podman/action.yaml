@@ -16,5 +16,6 @@ runs:
         : Ensure Podman
 
         echo ::group::Install Podman
+        sudo apt-get update
         sudo apt-get install podman
         echo ::endgroup::
