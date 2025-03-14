@@ -11,5 +11,5 @@ variables:
 sources:
 - kind: git_repo
   url: github:ffmpeg/nv-codec-headers.git
-  track: n12.2.72.0
-  ref: c69278340ab1d5559c7d7bf0edf615dc33ddbba7
+  track: n13.0.19.0
+  ref: e844e5b26f46bb77479f063029595293aa8f812d
