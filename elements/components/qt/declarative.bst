@@ -24,6 +24,6 @@ variables:
 
 sources:
 - kind: tar
-  url:
+  url: 
     qt_archive:%{qt-api-version}/%{qt-version}/submodules/qtdeclarative-everywhere-src-%{qt-version}.tar.xz
-  ref: 05207b2cfcf2ca74321165e81fc382ca289340d52de74ca2bad4c2b124a792f3
+  ref: 144d876adc8bb55909735143e678d1e24eadcd0a380a0186792d88b731346d56

@@ -11,4 +11,4 @@ sources:
 - kind: tar
   url: 
     qt_archive:%{qt-api-version}/%{qt-version}/submodules/qtlanguageserver-everywhere-src-%{qt-version}.tar.xz
-  ref: 1021b4b9024bd23bef86292f4b6c15cc7db620b6c47be8cb6e539bfae7f6cf8c
+  ref: 9eeb74ac15334c08777548c01e4ede80a4e2d36f1ebcb322423f24f14c2785fb
