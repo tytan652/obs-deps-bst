@@ -29,4 +29,4 @@ public:
 sources:
 - kind: git_repo
   url: github:LuaJIT/LuaJIT.git
-  ref: f725e44cda8f359869bf8f92ce71787ddca45618
+  ref: a4f56a459a588ae768801074b46ba0adcfb49eb1
