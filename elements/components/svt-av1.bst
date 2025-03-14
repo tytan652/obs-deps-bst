@@ -20,5 +20,5 @@ variables:
 sources:
 - kind: git_repo
   url: gitlab:AOMediaCodec/SVT-AV1.git
-  track: v2.2.1
-  ref: 55a01def732bb9e7016d23cc512384f7a88d6e86
+  track: v2.3.0
+  ref: 6e69def4ec283fe0b71195671245c3b768bebdef
