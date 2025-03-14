@@ -23,6 +23,6 @@ variables:
 
 sources:
 - kind: tar
-  url:
+  url: 
     qt_archive:%{qt-api-version}/%{qt-version}/submodules/qtimageformats-everywhere-src-%{qt-version}.tar.xz
-  ref: 3ca5ea60176603ce6ffc1bff59a4dcea139375233ce8e5e86c38f4e84c44627c
+  ref: d2a1bbb84707b8a0aec29227b170be00f04383fbf2361943596d09e7e443c8e1

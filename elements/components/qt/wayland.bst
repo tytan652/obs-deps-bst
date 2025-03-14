@@ -14,7 +14,6 @@ depends:
   - components/qt/declarative.bst
 
 variables:
-  # TODO: Disable adwaita feature when upgrading Qt
   cmake-local: >-
     -DFEATURE_wayland_client=ON
     -DFEATURE_wayland_server=OFF
@@ -36,4 +35,4 @@ sources:
 - kind: tar
   url:
     qt_archive:%{qt-api-version}/%{qt-version}/submodules/qtwayland-everywhere-src-%{qt-version}.tar.xz
-  ref: a96ecc0fecc05f9e18cfb7806fe5ebd7416be94e8f51ebeca75c80412f66553d
+  ref: 5e46157908295f2bf924462d8c0855b0508ba338ced9e810891fefa295dc9647

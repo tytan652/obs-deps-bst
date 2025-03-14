@@ -5,8 +5,8 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 variables:
-  qt-api-version: "6.6"
-  qt-version: "6.6.3"
+  qt-api-version: "6.8"
+  qt-version: "6.8.2"
 
   qt-bindir: "%{bindir}"
   qt-includedir: "%{includedir}/qt"

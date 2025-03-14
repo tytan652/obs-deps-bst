@@ -11,4 +11,4 @@ sources:
 - kind: tar
   url: 
     qt_archive:%{qt-api-version}/%{qt-version}/submodules/qtshadertools-everywhere-src-%{qt-version}.tar.xz
-  ref: 8c0909d63bb33cb863c0de5a823cd4ad3489858023ab81a7fe84080c3d3ca1e6
+  ref: d1d5f90e8885fc70d63ac55a4ce4d9a2688562033a000bc4aff9320f5f551871

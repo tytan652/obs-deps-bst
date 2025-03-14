@@ -9,6 +9,6 @@ depends:
 
 sources:
 - kind: tar
-  url:
+  url: 
     qt_archive:%{qt-api-version}/%{qt-version}/submodules/qtsvg-everywhere-src-%{qt-version}.tar.xz
-  ref: 4acb1e576eca55e955cf2b0d15c914a200df290e737accd7c1901fa1e33a25c7
+  ref: aa2579f21ca66d19cbcf31d87e9067e07932635d36869c8239d4decd0a9dc1fa
