@@ -18,13 +18,13 @@ public:
   bst:
     split-rules:
       exec-blocklist:
-        - "%{bindir}"
-        - "%{bindir}/**"
-        - "%{debugdir}%{bindir}"
-        - "%{debugdir}%{bindir}/**"
+      - "%{bindir}"
+      - "%{bindir}/**"
+      - "%{debugdir}%{bindir}"
+      - "%{debugdir}%{bindir}/**"
 
 sources:
 - kind: git_repo
   url: github:Haivision/srt.git
-  track: v1.5.3
-  ref: 09f35c0f1743e23f514cb41444504a7faeacf89e
+  track: v1.5.4
+  ref: a8c6b65520f814c5bd8f801be48c33ceece7c4a6
