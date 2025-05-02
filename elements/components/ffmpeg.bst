@@ -66,3 +66,7 @@ sources:
   path: patches/ffmpeg/0002-libaomenc-presets.patch
 - kind: patch
   path: patches/ffmpeg/0010-fdo-people-fdk-aac-gpl-compatible.patch
+- kind: patch
+  path: patches/ffmpeg/0011-lavc-vaapi_encode-Query-surface-alignment.patch
+- kind: patch
+  path: patches/ffmpeg/0012-lavc-vaapi_encode_h265-Use-surface-alignment.patch
