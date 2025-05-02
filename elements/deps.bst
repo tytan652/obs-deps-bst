@@ -3,6 +3,7 @@ description: Stack of OBS Studio non-Qt dependencies
 
 depends:
 - components/asio.bst
+- components/extra-cmake-modules.bst
 - components/ffmpeg.bst
 - components/jansson.bst
 - components/libajantv2.bst
