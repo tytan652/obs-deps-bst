@@ -58,8 +58,8 @@ public:
 sources:
 - kind: git_repo
   url: github:FFmpeg/FFmpeg.git
-  track: n7.1
-  ref: b08d7969c550a804a59511c7b83f2dd8cc0499b8
+  track: n7.1.1
+  ref: db69d06eeeab4f46da15030a80d539efb4503ca8
 - kind: patch
   path: patches/ffmpeg/0001-flvdec-handle-unknown.patch
 - kind: patch
