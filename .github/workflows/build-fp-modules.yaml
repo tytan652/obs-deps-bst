@@ -34,6 +34,10 @@ on:
         description: Size of the cache uncompressed
         type: string
         required: true
+      strict-cache-key-matching:
+        description: Only allow to restore a specific cache or build from scratch if no match
+        default: false
+        type: boolean
 env:
   PROJECT_OPTIONS: target_arch ${{ inputs.arch }}
 jobs:
@@ -65,8 +69,7 @@ jobs:
         with:
           server-quota-high: ${{ inputs.max-uncompressed-cache-size }}
           key: ${{ inputs.cache-key-prefix }}${{ inputs.cache-key-hash }}
-          restore-keys: |
-            ${{ inputs.cache-key-prefix }}
+          restore-keys: ${{ inputs.strict-cache-key-matching && null || inputs.cache-key-prefix }}
 
       - name: Build ${{ inputs.element }}
         id: build

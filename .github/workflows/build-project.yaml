@@ -14,6 +14,10 @@ on:
         description: Re-upload the cache to avoid automatic eviction
         default: false
         type: boolean
+      strict-cache-strategy:
+        description: Build from scratch if no matching cache is found
+        default: false
+        type: boolean
 jobs:
   prepare:
     name: Prepare cache key hash
@@ -48,6 +52,7 @@ jobs:
       arch: ${{ matrix.arch }}
       upload-artifacts: ${{ inputs.upload-artifacts }}
       reupload-cache: ${{ inputs.reupload-cache }}
+      strict-cache-key-matching: ${{ inputs.strict-cache-strategy }}
       max-uncompressed-cache-size: 2G
 
   fp-qt:
