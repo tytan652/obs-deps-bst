@@ -17,7 +17,6 @@ jobs:
     uses: ./.github/workflows/build-project.yaml
     with:
       arches: '["x86_64", "aarch64"]'
-      strict-cache-strategy: ${{ github.ref == 'refs/heads/master' }}
       upload-artifacts: ${{ github.ref == 'refs/heads/master' }}
 
   check-code:
