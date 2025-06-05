@@ -5,7 +5,7 @@ sources:
   url: gitlab:freedesktop-sdk/freedesktop-sdk.git
   track: release/24.08
   track-tags: True
-  ref: freedesktop-sdk-24.08.19-0-gd469cb4641aadc7670a6fca0b843897514334d96
+  ref: freedesktop-sdk-24.08.20-0-g06b1aa6a3dce92f31ca1cc7245b8660397c46a42
 - kind: create_custom_fdo_sdk_include_ffmpeg
 
 config:
