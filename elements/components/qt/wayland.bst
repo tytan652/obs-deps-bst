@@ -29,6 +29,7 @@ variables:
     -DFEATURE_wayland_client_wl_shell=OFF
     -DFEATURE_wayland_client_qt_shell=OFF
     -DFEATURE_egl_extension_platform_wayland=ON
+    -DFEATURE_wayland_decoration_adwaita=OFF
 
 sources:
 - kind: tar
