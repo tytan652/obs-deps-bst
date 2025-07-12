@@ -11,7 +11,6 @@ depends:
   - freedesktop-sdk.bst:components/vulkan-icd-loader.bst
   - freedesktop-sdk.bst:components/wayland.bst
   - components/qt/base.bst
-  - components/qt/declarative.bst
 
 variables:
   cmake-local: >-
