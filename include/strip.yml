@@ -1,0 +1,33 @@
+# Arguments for tooling and script used when stripping debug symbols
+
+variables:
+  optimize-debug: "true"
+  compress-debug: "true"
+  debugdatadir: "%{debugdir}"
+  sourcedir: "%{debugdatadir}/source"
+  stripdir-suffix: "%{element-name}"
+
+  toolchain-prefixes: >-
+    /usr
+    %{prefix}
+
+  strip-binaries-base: |
+    OPTS=()
+    if ! "%{optimize-debug}"; then
+      OPTS+=("-n")
+    fi
+    if ! "%{compress-debug}"; then
+      OPTS+=("-p")
+    fi
+    for p in %{toolchain-prefixes}; do
+      OPTS+=("-t" "${p}")
+    done
+    if [ -x "$(command -v freedesktop-sdk-stripper)" ]; then
+      freedesktop-sdk-stripper \
+        "${OPTS[@]}" \
+        "%{build-root}" \
+        "%{sourcedir}/%{stripdir-suffix}" \
+        "%{debugdatadir}/dwz/%{stripdir-suffix}" \
+        "%{debugdir}" \
+        "%{install-root}"
+    fi

@@ -16,8 +16,8 @@ public:
       exec-blocklist:
         - "%{bindir}"
         - "%{bindir}/**"
-        - "%{debugdir}%{bindir}"
-        - "%{debugdir}%{bindir}/**"
+        - "%{debugdir}/bin"
+        - "%{debugdir}/bin/**"
 
       runtime:
         (>):

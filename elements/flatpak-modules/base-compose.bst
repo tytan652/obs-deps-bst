@@ -12,4 +12,3 @@ config:
 build-depends:
 - deps.bst
 - manifests/deps.bst
-- flatpak-modules/fixup-debugdir.bst

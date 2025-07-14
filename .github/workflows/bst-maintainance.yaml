@@ -60,7 +60,7 @@ jobs:
         run: |
           python .github/scripts/parse-bst-git-tag-ref.py elements/${{ env.ELEMENT }}
 
-      - name: Sync common BuildStream plugins
+      - name: Sync shared files
         id: sync
         if: ${{ fromJSON(steps.check.outputs.changed) }}
         shell: bash
@@ -74,6 +74,9 @@ jobs:
               rm $file
             fi
           done
+
+          cp freedesktop-sdk/include/strip.yml include/strip.yml
+          sed -i "s/strip-binaries/strip-binaries-base/g" include/strip.yml
 
           tag="${{ steps.parse-ref.outputs.tag }}"
           prefix="freedesktop-sdk-"
