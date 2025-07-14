@@ -23,8 +23,8 @@ public:
       devtools:
         - "%{bindir}"
         - "%{bindir}/**"
-        - "%{debugdir}%{bindir}"
-        - "%{debugdir}%{bindir}/**"
+        - "%{debugdir}"
+        - "%{debugdir}/**"
         - "%{datadir}"
         - "%{datadir}/**"
 

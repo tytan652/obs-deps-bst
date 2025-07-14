@@ -20,8 +20,8 @@ public:
       exec-blocklist:
       - "%{bindir}"
       - "%{bindir}/**"
-      - "%{debugdir}%{bindir}"
-      - "%{debugdir}%{bindir}/**"
+      - "%{debugdir}/bin"
+      - "%{debugdir}/bin/**"
 
 sources:
 - kind: git_repo
