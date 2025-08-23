@@ -12,13 +12,15 @@ variables:
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     -DUSE_SHARED_MBEDTLS_LIBRARY=ON
     -DUSE_STATIC_MBEDTLS_LIBRARY=OFF
+    -DUSE_SHARED_TF_PSA_CRYPTO_LIBRARY=ON
+    -DUSE_STATIC_TF_PSA_CRYPTO_LIBRARY=OFF
     -DENABLE_TESTING=OFF
     -DENABLE_PROGRAMS=OFF
 
 sources:
 # MbedTLS provide a release tarball that allows to avoid maintaining git submodules
 - kind: tar
-  url: 
+  url:
     github:Mbed-TLS/mbedtls/releases/download/mbedtls-%{mbedtls-version}/mbedtls-%{mbedtls-version}.tar.bz2
   ref: ec35b18a6c593cf98c3e30db8b98ff93e8940a8c4e690e66b41dfc011d678110
 - kind: patch
