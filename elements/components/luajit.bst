@@ -1,10 +1,11 @@
 kind: make
 
 build-depends:
+- freedesktop-sdk.bst:public-stacks/buildsystem-make.bst
 - freedesktop-sdk.bst:components/git-minimal.bst
 
 depends:
-- freedesktop-sdk.bst:bootstrap-import.bst
+- freedesktop-sdk.bst:public-stacks/runtime-minimal.bst
 
 variables:
   # Build amalgamation as shared library without early stripping

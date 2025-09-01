@@ -22,12 +22,10 @@ variables:
     for p in %{toolchain-prefixes}; do
       OPTS+=("-t" "${p}")
     done
-    if [ -x "$(command -v freedesktop-sdk-stripper)" ]; then
-      freedesktop-sdk-stripper \
+    freedesktop-sdk-stripper \
         "${OPTS[@]}" \
         "%{build-root}" \
         "%{sourcedir}/%{stripdir-suffix}" \
         "%{debugdatadir}/dwz/%{stripdir-suffix}" \
         "%{debugdir}" \
         "%{install-root}"
-    fi
