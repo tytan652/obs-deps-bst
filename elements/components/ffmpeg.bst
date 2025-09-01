@@ -2,8 +2,7 @@ kind: make
 description: FFmpeg component based on Freedesktop SDK version
 
 (@):
-# Include file created by 'create_custom_fdo_sdk_include_ffmpeg' source in freedesktop-sdk junction.
-- freedesktop-sdk.bst:elements/include/ffmpeg-custom.yml
+- elements/include/ffmpeg.yml
 
 build-depends:
   (>):
@@ -13,11 +12,10 @@ depends:
   (>):
   - components/librist.bst
   - components/srt.bst
-  - components/svt-av1.bst
   - components/x264.bst
 
 variables:
-  obs-conf-extra: >-
+  conf-extra: >-
     --enable-gnutls
     --enable-gpl
     --enable-libx264
@@ -32,20 +30,6 @@ variables:
     --disable-doc
     --disable-programs
     --disable-devices
-
-  # Only x264 is disabled in Freedesktop SDK
-  obs-missing-encoders: libx264,libx264rgb
-
-  conf-extra: >-
-    --enable-encoder=%{fdo-encoders},%{obs-missing-encoders}
-    --enable-decoder=%{fdo-decoders}
-    %{obs-conf-extra}
-    %{fdo-conf-extra}
-
-config:
-  configure-commands:
-  - ./configure --prefix="%{prefix}" --libdir="%{libdir}" --arch="%{arch}" %{conf-local}
-    %{conf-extra}
 
 public:
   bst:
@@ -70,3 +54,7 @@ sources:
   path: patches/ffmpeg/0011-lavc-vaapi_encode-Query-surface-alignment.patch
 - kind: patch
   path: patches/ffmpeg/0012-lavc-vaapi_encode_h265-Use-surface-alignment.patch
+- kind: patch
+  path: patches/ffmpeg/0013-posix-ioctl-hack.patch
+- kind: patch
+  path: patches/ffmpeg/0014-svt-av1-v3.patch

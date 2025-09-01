@@ -6,7 +6,7 @@ build-depends:
 - components/luajit.bst
 
 depends:
-- freedesktop-sdk.bst:bootstrap-import.bst
+- freedesktop-sdk.bst:public-stacks/runtime-minimal.bst
 
 variables:
   conf-local: >-

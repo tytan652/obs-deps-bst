@@ -4,7 +4,7 @@ build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 
 depends:
-- freedesktop-sdk.bst:bootstrap-import.bst
+- freedesktop-sdk.bst:public-stacks/runtime-minimal.bst
 
 variables:
   mbedtls-version: 3.6.4
@@ -18,7 +18,7 @@ variables:
 sources:
 # MbedTLS provide a release tarball that allows to avoid maintaining git submodules
 - kind: tar
-  url: 
+  url:
     github:Mbed-TLS/mbedtls/releases/download/mbedtls-%{mbedtls-version}/mbedtls-%{mbedtls-version}.tar.bz2
   ref: ec35b18a6c593cf98c3e30db8b98ff93e8940a8c4e690e66b41dfc011d678110
 - kind: patch

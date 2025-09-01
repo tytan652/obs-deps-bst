@@ -1,7 +1,7 @@
 kind: make
 
 build-depends:
-- freedesktop-sdk.bst:bootstrap-import.bst
+- freedesktop-sdk.bst:public-stacks/buildsystem-make.bst
 
 variables:
   make-args: >-

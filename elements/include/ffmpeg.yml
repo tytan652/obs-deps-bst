@@ -1,0 +1,95 @@
+build-depends:
+- freedesktop-sdk.bst:components/nasm.bst
+- freedesktop-sdk.bst:components/vulkan-headers.bst
+- freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
+
+depends:
+- freedesktop-sdk.bst:public-stacks/runtime-minimal.bst
+- freedesktop-sdk.bst:components/dav1d.bst
+- freedesktop-sdk.bst:components/fontconfig.bst
+- freedesktop-sdk.bst:components/freetype.bst
+- freedesktop-sdk.bst:components/fribidi.bst
+- freedesktop-sdk.bst:components/lame.bst
+- freedesktop-sdk.bst:components/libjxl.bst
+- freedesktop-sdk.bst:components/libva.bst
+- freedesktop-sdk.bst:components/libvdpau.bst
+- freedesktop-sdk.bst:components/librsvg.bst
+- freedesktop-sdk.bst:components/mpg123.bst
+- freedesktop-sdk.bst:components/openal.bst
+- freedesktop-sdk.bst:components/libpulse.bst
+- freedesktop-sdk.bst:components/sdl2-compat.bst
+- freedesktop-sdk.bst:components/aom.bst
+- freedesktop-sdk.bst:components/gnutls.bst
+- freedesktop-sdk.bst:components/speex.bst
+- freedesktop-sdk.bst:components/ladspa-sdk.bst
+- freedesktop-sdk.bst:components/lcms.bst
+- freedesktop-sdk.bst:components/libtheora.bst
+- freedesktop-sdk.bst:components/libgcrypt.bst
+- freedesktop-sdk.bst:components/libvorbis.bst
+- freedesktop-sdk.bst:components/libvpx.bst
+- freedesktop-sdk.bst:components/opus.bst
+- freedesktop-sdk.bst:components/openjpeg.bst
+- freedesktop-sdk.bst:components/svt-av1.bst
+- freedesktop-sdk.bst:components/vulkan-icd-loader.bst
+- freedesktop-sdk.bst:components/v4l-utils.bst
+- freedesktop-sdk.bst:components/libwebp.bst
+- freedesktop-sdk.bst:components/xorg-lib-xcb.bst
+- freedesktop-sdk.bst:components/libmysofa.bst
+
+variables:
+  optimize-debug: "false"
+  arch-conf: ''
+  ffmpeg-arch: '%{arch}'
+
+  conf-local: >-
+    --prefix="%{prefix}"
+    --libdir="%{libdir}"
+    --optflags="${CFLAGS}"
+    --extra-ldflags="${LDFLAGS}"
+    --disable-stripping
+    --disable-doc
+    --disable-static
+    --disable-encoders
+    --disable-decoders
+    --enable-shared
+    --enable-gnutls
+    --enable-gcrypt
+    --enable-ladspa
+    --enable-lcms2
+    --enable-libaom
+    --enable-libdav1d
+    --enable-libmp3lame
+    --enable-libfontconfig
+    --enable-libfreetype
+    --enable-libfribidi
+    --enable-libjxl
+    --enable-libopus
+    --enable-libpulse
+    --enable-libspeex
+    --enable-libtheora
+    --enable-libvorbis
+    --enable-libvpx
+    --enable-librsvg
+    --enable-libwebp
+    --enable-libxml2
+    --enable-libopenjpeg
+    --enable-libsvtav1
+    --enable-openal
+    --enable-opengl
+    --enable-sdl2
+    --enable-vulkan
+    --enable-zlib
+    --enable-libv4l2
+    --enable-libxcb
+    --enable-vdpau
+    --enable-vaapi
+    --enable-pthreads
+    --enable-libmysofa
+    --arch="%{ffmpeg-arch}"
+
+  conf-extra: ''
+
+# ffmpeg is not using autotools, but a configure and Makefile files
+config:
+  configure-commands:
+  - ./configure %{conf-local} %{conf-extra} %{arch-conf}

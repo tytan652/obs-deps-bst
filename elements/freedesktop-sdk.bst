@@ -3,10 +3,10 @@ kind: junction
 sources:
 - kind: git_tag
   url: gitlab:freedesktop-sdk/freedesktop-sdk.git
-  track: release/24.08
+  # Update include/strip.yml, elements/include/ffmpeg.yml and elements/plugins if bumping Freedesktop SDK release branch
+  track: release/25.08
   track-tags: True
-  ref: freedesktop-sdk-24.08.24-0-g83c1b59a94e6c951ba7baa93e430cf95f0e226e0
-- kind: create_custom_fdo_sdk_include_ffmpeg
+  ref: freedesktop-sdk-25.08.0-0-g04d50e865e92fcc115136b0bc882c17a3d36a1dd
 
 config:
   options:
