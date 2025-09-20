@@ -1,4 +1,4 @@
-# obs-deps-bst
+# obs-deps-buildstream
 
 This repository is a [BuildStream](https://buildstream.build/) project to build OBS Studio dependencies for Flatpak.
 
